@@ -71,7 +71,9 @@ public class HelloSceneformActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
     private int fuel;
+    private int barrelNum;
 
+    //Move forward the tank
     private void moveForward() {
         moveAnimation = new ObjectAnimator();
         moveAnimation.setAutoCancel(true);
@@ -89,6 +91,7 @@ public class HelloSceneformActivity extends AppCompatActivity {
         moveAnimation.start();
     }
 
+    //Rotate the tank with a given degree
     private void rotate(int degree) {
         turnAnimation = new ObjectAnimator();
         turnAnimation.setAutoCancel(true);
@@ -106,6 +109,7 @@ public class HelloSceneformActivity extends AppCompatActivity {
         turnAnimation.start();
     }
 
+    //Place an oil barrel nearby the tank
     private void placeOil(Vector3 tankPosition) {
         oilNode = new AnchorNode();
         float distance = 0.4f;
@@ -130,16 +134,19 @@ public class HelloSceneformActivity extends AppCompatActivity {
             return;
         }
 
+        //Create the tank model
         ModelRenderable.builder()
                 .setSource(this, R.raw.tank)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable);
 
+        //Create the oil barrel model
         ModelRenderable.builder()
                 .setSource(this, R.raw.oildrum)
                 .build()
                 .thenAccept(renderable -> oilRenderable = renderable);
 
+        //Get the AR view, and set an action callback to tap event
         setContentView(R.layout.activity_ux);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         arFragment.setOnTapArPlaneListener(
@@ -148,6 +155,7 @@ public class HelloSceneformActivity extends AppCompatActivity {
                         return;
                     }
 
+                    //Initialize the game
                     Anchor anchor = hitResult.createAnchor();
                     if(startNode == null) {
                         startNode = new AnchorNode(anchor);
@@ -159,10 +167,12 @@ public class HelloSceneformActivity extends AppCompatActivity {
 
                         placeOil(model.getWorldPosition());
                         fuel = 100;
+                        barrelNum = 0;
                     }
                 }
         );
 
+        //This callback fires on every scene update (maybe more than one in a sec)
         arFragment.getArSceneView().getScene().addOnUpdateListener(new Scene.OnUpdateListener() {
             @Override
             public void onUpdate(FrameTime frameTime) {
@@ -170,16 +180,27 @@ public class HelloSceneformActivity extends AppCompatActivity {
                     return;
                 }
 
+                //The tank touched an oil barrel, so we refill the fuel
                 Node barrel = arFragment.getArSceneView().getScene().overlapTest(model);
                 if(barrel != null) {
                     barrel.setRenderable(null);
                     placeOil(model.getWorldPosition());
                     fuel = 100;
+                    barrelNum++;
+                }
+
+                //The tank run out of fuel, Game Over
+                if(fuel <= 0) {
+                    model.setRenderable(null);
+                    Toast toast = Toast.makeText( HelloSceneformActivity.this, "Game Over, barrels: " + barrelNum, Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    arFragment.getArSceneView().getScene().removeOnUpdateListener(this);
                 }
             }
         });
 
-        //A thread witch updates the progress bar
+        //A thread which updates the progress bar
         progressBar = findViewById(R.id.progressBar);
         new Thread(new Runnable() {
             @Override
