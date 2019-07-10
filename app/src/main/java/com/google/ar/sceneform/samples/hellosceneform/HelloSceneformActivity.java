@@ -30,6 +30,7 @@ import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
@@ -42,6 +43,9 @@ public class HelloSceneformActivity extends AppCompatActivity {
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     private ArFragment arFragment;
+    private AnchorNode startNode;
+    private ModelRenderable modelRenderable;
+    private Node model;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -52,8 +56,28 @@ public class HelloSceneformActivity extends AppCompatActivity {
             return;
         }
 
+        ModelRenderable.builder()
+                .setSource(this, R.raw.andy)
+                .build()
+                .thenAccept(renderable -> modelRenderable = renderable);
+
         setContentView(R.layout.activity_ux);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+        arFragment.setOnTapArPlaneListener(
+                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
+                    if(modelRenderable == null) {
+                        return;
+                    }
+
+                    Anchor anchor = hitResult.createAnchor();
+                    startNode = new AnchorNode(anchor);
+                    startNode.setParent(arFragment.getArSceneView().getScene());
+
+                    model = new Node();
+                    model.setParent(startNode);
+                    model.setRenderable(modelRenderable);
+                }
+        );
     }
 
     // Eszköz AR kompatibilitásának ellenőrzése
