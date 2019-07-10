@@ -66,3 +66,8 @@ sceneform.asset('sampledata/models/tank.obj',
         'default',
         'sampledata/models/tank.sfa',
         'src/main/res/raw/tank')
+
+sceneform.asset('sampledata/models/oildrum.obj',
+        'default',
+        'sampledata/models/oildrum.sfa',
+        'src/main/res/raw/oildrum')

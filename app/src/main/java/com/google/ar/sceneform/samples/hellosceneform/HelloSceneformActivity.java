@@ -44,6 +44,8 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import java.util.Random;
+
 /**
  * This is an example activity that uses the Sceneform UX package to make common AR tasks easier.
  */
@@ -54,7 +56,9 @@ public class HelloSceneformActivity extends AppCompatActivity {
     private ArFragment arFragment;
     private AnchorNode startNode;
     private ModelRenderable modelRenderable;
+    private ModelRenderable oilRenderable;
     private Node model;
+    private AnchorNode oilNode;
     private Button btnLeft;
     private Button btnRight;
     private Button btnForward;
@@ -96,6 +100,21 @@ public class HelloSceneformActivity extends AppCompatActivity {
         turnAnimation.start();
     }
 
+    private void placeOil(Vector3 tankPosition) {
+        oilNode = new AnchorNode();
+        float distance = 0.4f;
+
+        Random random = new Random();
+        float randomX = (-1) * distance + random.nextFloat() * (distance - (-1) * distance);
+        float randomZ = (-1) * distance + random.nextFloat() * (distance - (-1) * distance);
+        tankPosition.x += randomX;
+        tankPosition.z += randomZ;
+
+        oilNode.setWorldPosition(tankPosition);
+        oilNode.setParent(arFragment.getArSceneView().getScene());
+        oilNode.setRenderable(oilRenderable);
+    }
+
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +128,11 @@ public class HelloSceneformActivity extends AppCompatActivity {
                 .setSource(this, R.raw.tank)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable);
+
+        ModelRenderable.builder()
+                .setSource(this, R.raw.oildrum)
+                .build()
+                .thenAccept(renderable -> oilRenderable = renderable);
 
         setContentView(R.layout.activity_ux);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
@@ -126,6 +150,8 @@ public class HelloSceneformActivity extends AppCompatActivity {
                         model = new Node();
                         model.setParent(startNode);
                         model.setRenderable(modelRenderable);
+
+                        placeOil(model.getWorldPosition());
                     }
                 }
         );
