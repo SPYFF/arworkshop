@@ -35,7 +35,9 @@ import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.FrameTime;
 import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.QuaternionEvaluator;
 import com.google.ar.sceneform.math.Vector3;
@@ -155,6 +157,21 @@ public class HelloSceneformActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        arFragment.getArSceneView().getScene().addOnUpdateListener(new Scene.OnUpdateListener() {
+            @Override
+            public void onUpdate(FrameTime frameTime) {
+                if(model == null) {
+                    return;
+                }
+
+                Node barrel = arFragment.getArSceneView().getScene().overlapTest(model);
+                if(barrel != null) {
+                    barrel.setRenderable(null);
+                    placeOil(model.getWorldPosition());
+                }
+            }
+        });
 
         //Create references for the buttons on the UI
         btnLeft = findViewById(R.id.btnLeft);
