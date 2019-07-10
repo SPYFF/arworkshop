@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
@@ -67,6 +68,9 @@ public class HelloSceneformActivity extends AppCompatActivity {
 
     private ObjectAnimator moveAnimation;
     private ObjectAnimator turnAnimation;
+
+    private ProgressBar progressBar;
+    private int fuel;
 
     private void moveForward() {
         moveAnimation = new ObjectAnimator();
@@ -154,6 +158,7 @@ public class HelloSceneformActivity extends AppCompatActivity {
                         model.setRenderable(modelRenderable);
 
                         placeOil(model.getWorldPosition());
+                        fuel = 100;
                     }
                 }
         );
@@ -169,9 +174,27 @@ public class HelloSceneformActivity extends AppCompatActivity {
                 if(barrel != null) {
                     barrel.setRenderable(null);
                     placeOil(model.getWorldPosition());
+                    fuel = 100;
                 }
             }
         });
+
+        //A thread witch updates the progress bar
+        progressBar = findViewById(R.id.progressBar);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    progressBar.setProgress(fuel);
+                    fuel--;
+                    try {
+                        Thread.sleep(150);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
 
         //Create references for the buttons on the UI
         btnLeft = findViewById(R.id.btnLeft);

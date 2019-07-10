@@ -51,4 +51,12 @@
         android:text="Forward" />
   </LinearLayout>
 
+  <ProgressBar
+      android:id="@+id/progressBar"
+      style="?android:attr/progressBarStyleHorizontal"
+      android:layout_width="match_parent"
+      android:layout_height="45dp"
+      android:max="100"
+      android:progress="100"/>
+
 </FrameLayout>
