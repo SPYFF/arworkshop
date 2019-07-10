@@ -25,6 +25,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
@@ -46,6 +48,9 @@ public class HelloSceneformActivity extends AppCompatActivity {
     private AnchorNode startNode;
     private ModelRenderable modelRenderable;
     private Node model;
+    private Button btnLeft;
+    private Button btnRight;
+    private Button btnForward;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -80,9 +85,59 @@ public class HelloSceneformActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        //Create references for the buttons on the UI
+        btnLeft = findViewById(R.id.btnLeft);
+        btnRight = findViewById(R.id.btnRight);
+        btnForward = findViewById(R.id.btnForward);
+
+        btnLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.d(TAG, "BtnLeft");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        Log.d(TAG, "BtnStopLeft");
+                }
+                return false;
+            }
+        });
+
+        btnRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.d(TAG, "BtnRight");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        Log.d(TAG, "BtnStopRight");
+                }
+                return false;
+            }
+        });
+
+        btnForward.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.d(TAG, "BtnForward");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        Log.d(TAG, "BtnStopForward");
+                }
+                return false;
+            }
+        });
     }
 
-    // Eszköz AR kompatibilitásának ellenőrzése
+    // Check if the device is AR compatible
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
         if (Build.VERSION.SDK_INT < VERSION_CODES.N) {
             Log.e(TAG, "Sceneform requires Android N or later");

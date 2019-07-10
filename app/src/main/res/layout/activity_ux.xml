@@ -24,4 +24,31 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent" />
 
+  <LinearLayout
+      android:layout_gravity="bottom"
+      android:layout_width="match_parent"
+      android:layout_height="75dp">
+
+    <Button
+        android:id="@+id/btnLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Left" />
+
+    <Button
+        android:id="@+id/btnRight"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Right" />
+
+    <Button
+        android:id="@+id/btnForward"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Forward" />
+  </LinearLayout>
+
 </FrameLayout>
