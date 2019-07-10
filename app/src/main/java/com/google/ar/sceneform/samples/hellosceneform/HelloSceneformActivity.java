@@ -15,6 +15,7 @@
  */
 package com.google.ar.sceneform.samples.hellosceneform;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.Toast;
 import com.google.ar.core.Anchor;
@@ -33,6 +35,8 @@ import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.math.Vector3Evaluator;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
@@ -51,6 +55,25 @@ public class HelloSceneformActivity extends AppCompatActivity {
     private Button btnLeft;
     private Button btnRight;
     private Button btnForward;
+
+    private ObjectAnimator moveAnimation;
+
+    private void moveForward() {
+        moveAnimation = new ObjectAnimator();
+        moveAnimation.setAutoCancel(true);
+        moveAnimation.setTarget(model);
+
+        Vector3 tankPosition = model.getLocalPosition();
+        tankPosition.z += 1;
+        Vector3 targetPositon = model.localToWorldPoint(tankPosition);
+
+        moveAnimation.setObjectValues(model.getWorldPosition(), targetPositon);
+        moveAnimation.setPropertyName("worldPosition");
+        moveAnimation.setEvaluator(new Vector3Evaluator());
+        moveAnimation.setInterpolator(new LinearInterpolator());
+        moveAnimation.setDuration(7000);
+        moveAnimation.start();
+    }
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -126,10 +149,12 @@ public class HelloSceneformActivity extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        moveForward();
                         Log.d(TAG, "BtnForward");
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
+                        moveAnimation.cancel();
                         Log.d(TAG, "BtnStopForward");
                 }
                 return false;
