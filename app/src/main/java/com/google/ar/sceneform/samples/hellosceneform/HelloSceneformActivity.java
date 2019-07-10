@@ -70,12 +70,14 @@ public class HelloSceneformActivity extends AppCompatActivity {
                     }
 
                     Anchor anchor = hitResult.createAnchor();
-                    startNode = new AnchorNode(anchor);
-                    startNode.setParent(arFragment.getArSceneView().getScene());
+                    if(startNode == null) {
+                        startNode = new AnchorNode(anchor);
+                        startNode.setParent(arFragment.getArSceneView().getScene());
 
-                    model = new Node();
-                    model.setParent(startNode);
-                    model.setRenderable(modelRenderable);
+                        model = new Node();
+                        model.setParent(startNode);
+                        model.setRenderable(modelRenderable);
+                    }
                 }
         );
     }
