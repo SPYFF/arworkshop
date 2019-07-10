@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.Toast;
@@ -35,6 +36,8 @@ import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
+import com.google.ar.sceneform.math.Quaternion;
+import com.google.ar.sceneform.math.QuaternionEvaluator;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.math.Vector3Evaluator;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -57,6 +60,7 @@ public class HelloSceneformActivity extends AppCompatActivity {
     private Button btnForward;
 
     private ObjectAnimator moveAnimation;
+    private ObjectAnimator turnAnimation;
 
     private void moveForward() {
         moveAnimation = new ObjectAnimator();
@@ -73,6 +77,23 @@ public class HelloSceneformActivity extends AppCompatActivity {
         moveAnimation.setInterpolator(new LinearInterpolator());
         moveAnimation.setDuration(7000);
         moveAnimation.start();
+    }
+
+    private void rotate(int degree) {
+        turnAnimation = new ObjectAnimator();
+        turnAnimation.setAutoCancel(true);
+        turnAnimation.setTarget(model);
+
+        Vector3 rotateAxis = new Vector3(0f, 1f, 0f);
+        Quaternion rotateWith = Quaternion.axisAngle(rotateAxis, degree);
+        Quaternion newOrientation = Quaternion.multiply(model.getWorldRotation(), rotateWith);
+
+        turnAnimation.setObjectValues(model.getWorldRotation(), newOrientation);
+        turnAnimation.setPropertyName("worldRotation");
+        turnAnimation.setEvaluator(new QuaternionEvaluator());
+        turnAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        turnAnimation.setDuration(2000);
+        turnAnimation.start();
     }
 
     @Override
@@ -119,10 +140,12 @@ public class HelloSceneformActivity extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        rotate(180);
                         Log.d(TAG, "BtnLeft");
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
+                        turnAnimation.cancel();
                         Log.d(TAG, "BtnStopLeft");
                 }
                 return false;
@@ -134,10 +157,12 @@ public class HelloSceneformActivity extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        rotate(-180);
                         Log.d(TAG, "BtnRight");
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
+                        turnAnimation.cancel();
                         Log.d(TAG, "BtnStopRight");
                 }
                 return false;
