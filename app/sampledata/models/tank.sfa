@@ -1,0 +1,42 @@
+{
+  materials: [
+    {
+      name: 'Standard',
+      parameters: [
+        {
+          baseColorMap: 'base_color',
+          normalMap: 'normal'
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+  ],
+  samplers: [
+    {
+        file: 'sampledata/models/Tank_dif.jpg',
+        name: 'base_color',
+        injections: [ { usage: 'BaseColor' } ]
+    },
+    {
+        file: 'sampledata/models/Tank_norm.jpg',
+        name: 'normal',
+        injections: [ { usage: 'Normal' } ]
+    }
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+    ],
+    collision: {},
+    file: 'sampledata/models/tank.obj',
+    name: 'tank',
+    recenter: 'root',
+    scale: 0.0005,
+  },
+  version: '0.54:2',
+}

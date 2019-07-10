@@ -57,7 +57,7 @@ public class HelloSceneformActivity extends AppCompatActivity {
         }
 
         ModelRenderable.builder()
-                .setSource(this, R.raw.andy)
+                .setSource(this, R.raw.tank)
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable);
 
